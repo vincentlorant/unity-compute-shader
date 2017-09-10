@@ -1,0 +1,11 @@
+﻿#pragma kernel CSMain
+
+RWStructuredBuffer<int> Result;
+int multiple;
+
+[numthreads(8,1,1)]
+
+void CSMain (uint3 id : SV_DispatchThreadID)
+{	
+	Result[id.x] = id.x *  multiple;
+}

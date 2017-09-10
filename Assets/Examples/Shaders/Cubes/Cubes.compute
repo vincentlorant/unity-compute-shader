@@ -1,0 +1,26 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct Cube
+{
+	half3 position;
+	half3 velocity;
+	half3 scale;
+	half4 rotation;
+};
+
+// Array of data which is shared with the shader
+RWStructuredBuffer<Cube> cubeBuffer;
+
+// Variable Updated by the CPU
+float4 attractorPosition;
+float deltaTime;
+
+[numthreads(256,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float3 dir = normalize(attractorPosition.xyz - cubeBuffer[id.x].position);
+
+	cubeBuffer[id.x].velocity += dir * 0.1f;
+	cubeBuffer[id.x].position += cubeBuffer[id.x].velocity * deltaTime ;
+}

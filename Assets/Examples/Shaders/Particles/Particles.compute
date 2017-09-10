@@ -1,0 +1,30 @@
+﻿/*
+Greatly Inspired by antoinefournier/XParticle project
+https://github.com/antoinefournier/XParticle
+*/
+
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct Particle
+{
+	half3 position;
+	half3 velocity;
+	half3 scale;
+};
+
+// Array of data which is shared with the shader
+RWStructuredBuffer<Particle> particleBuffer;
+
+// Variable Updated by the CPU
+float4 attractorPosition;
+float deltaTime;
+
+[numthreads(256,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float3 dir = normalize(attractorPosition.xyz - particleBuffer[id.x].position);
+
+	particleBuffer[id.x].velocity += dir * 0.1f;
+	particleBuffer[id.x].position += particleBuffer[id.x].velocity * deltaTime;
+}
