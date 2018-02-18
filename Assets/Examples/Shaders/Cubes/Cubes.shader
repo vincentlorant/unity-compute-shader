@@ -12,7 +12,7 @@
 
         CGPROGRAM
         // Physically based Standard lighting model
-        #pragma surface surf Standard addshadow fullforwardshadows alpha
+        #pragma surface surf Standard vertex:vert addshadow
         #pragma multi_compile_instancing
         #pragma instancing_options procedural:setup
 
@@ -31,23 +31,37 @@
 						half4 rotation;
 				};
 
-
 				#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 						StructuredBuffer<Cube> cubeBuffer;
 				#endif
-
-        void setup()
+        
+        /*
+        Base one unity graphics programming
+        https://github.com/IndieVisualLab/UnityGraphicsProgrammingFrontCover
+        */
+        void vert(inout appdata_full v)
         {
-						#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+          #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 
 								half3 position 	=  cubeBuffer[unity_InstanceID].position;
 								half3 scale = cubeBuffer[unity_InstanceID].scale;
 								half4 rotation = cubeBuffer[unity_InstanceID].rotation;
 
-								//apply transformation
-								SetObjectTransform(rotation,position,scale);
+                float4x4 object2world = (float4x4)0;
+                object2world._11_22_33_44 = float4(scale.xyz, 1.0);
 
+                float4x4 rotMatrix = eulerAnglesToRotationMatrix(rotation.xyz);
+
+                object2world = mul(rotMatrix, object2world);
+                object2world._14_24_34 += position.xyz;
+
+                v.vertex = mul(object2world, v.vertex);
+                v.normal = normalize(mul(object2world, v.normal));
 						#endif
+        }
+
+        void setup()
+        {
         }
 
         half _Glossiness;
