@@ -1,1 +1,3 @@
-# Tutorial about Compute Shaders inside Unity3D. 
+# Compute shaders
+Tutorial about Compute Shaders graphics generation inside Unity3D. 
+
