@@ -1,3 +1,3 @@
 # Compute shaders
-Tutorial about Compute Shaders graphics generation inside Unity3D. 
-
+Source files of a compute shader and graphic generation inside Unity3D.
+(edit) tutorial not available anymore.
